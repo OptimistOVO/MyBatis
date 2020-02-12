@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- properties加载外部配置文件 -->
+	<properties resource="db.properties"></properties>
+	<!-- settings标签 -->
+	<settings>
+		<!-- 设置MyBatis标签使用log4j日志格式支持 -->
+		<setting name="logImpl" value="LOG4J"/>
+	</settings>
+	
+	<!-- 
+		用于指定使用哪个环境 
+		default: 用于指定使用的环境id
+	-->
+	<!-- typeAliases 给user类起别名u-->
+	<typeAliases>
+		<!-- <typeAlias type="com.bjsxt.bean.User" alias="u"/> -->
+		<!-- 默认没有alias就是类名 User,,大小写无所谓-->
+		<!-- <typeAlias type="com.bjsxt.bean.User"/> -->
+		<package name="com.bjsxt.bean"/>
+	</typeAliases>
+	
+	<environments default="dev">
+		<!-- 
+			用于配置开发环境
+			id:环境的唯一识别码
+		 -->
+		<environment id="dev">
+			<!-- 
+				事务管理器
+				type用于设定mybatis采用什么方式管理事务
+				JDBC表示使用jdbc一样的管理方式
+			 -->
+			<transactionManager type="JDBC"></transactionManager>
+			<!-- 
+				数据源/连接池，用于配置连接池和数据库连接的参数
+				type：用于设置mybatis是否采用连接池技术
+				POOLED表示使用连接池技术
+			 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="${jdbc.driver}"/>
+				<property name="url" value="${jdbc.url}"/>
+				<property name="username" value="${jdbc.username}"/>
+				<property name="password" value="${jdbc.password}"/>
+			</dataSource>
+		</environment>
+	</environments>
+	<!-- 扫描映射文件 -->
+	<mappers>
+		
+		<!-- 测试接口绑定注释掉
+		  <mapper resource="com/bjsxt/mapper/UserMapper.xml"/> -->
+		
+		<!-- 
+			以下测试接口绑定：
+			扫描接口文件，，或者包
+		 -->
+		 <!-- <mapper class="com.bjsxt.mapper.UserMapper"/> -->
+		<package name="com.bjsxt.mapper"/>
+	</mappers>
+</configuration>

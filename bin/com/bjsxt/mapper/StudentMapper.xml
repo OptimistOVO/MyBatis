@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjsxt.mapper.StudentMapper">
+	<!-- 单表查询+业务装配 -->
+	<select id="selAll" resultType="Student">
+		select * from t_students
+	</select>
+	
+	<!-- 如果去掉service层，则使用resultMap，采用N+1的查询模式		-->
+	 <resultMap type="Student" id="map">
+	 	<result property="cid" column="cid"/>
+	 	<!-- 用于关联一个对象属性  如Student类中的Clazz  select 指执行哪条语句  column 传入的参数-->
+	 	<association property="clazz" select="com.bjsxt.mapper.ClazzMapper.selById" column="cid"></association>
+	 </resultMap>
+	<select id="selAll2" resultMap="map">
+		select * from t_students
+	</select>
+	
+	<!-- 测试关联方式查询 -->
+	<resultMap type="Student" id="guanlian">
+		<id column="sid" property="id"/>
+		<result column="sname" property="name"/>
+		<result column="gender" property="gender"/>
+		<!-- 用association先关联对象属性clazz javaType是类型Clazz全限定路径-->
+		<association property="clazz" javaType="Clazz">
+			<id column="cid" property="id"/>
+			<result column="cname" property="name"/>
+			<result column="room" property="room"/>
+		</association>
+	</resultMap>
+	<select id="selAll3" resultMap="guanlian">
+		select s.id sid,s.name sname,s.age,s.gender,c.id cid, c.name cname, c.room
+		from t_students s 
+		left join t_class c 
+		on s.cid = c.id;
+	</select>
+</mapper>

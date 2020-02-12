@@ -1,0 +1,30 @@
+configuration
+	配置文件的根元素
+environments
+	用于管理所有的环境，并且可以指定默认使用哪一个环境，通过default属性来决定
+environment
+	用于配置环境，id属性用于当前环境的唯一标识
+transationManager
+	用于配置事务管理器
+	type属性：用于指定MyBatis采用何种方式管理事务：JDBC   MANAGED(将事务管理交给其他容器，Spring等)
+DataSource
+	用于配置数据源，设置MyBatis是否使用连接池技术，并且配置四个参数
+	type属性：用于设置MyBatis是否使用连接池技术：POOLED   UNPOOLED   JNDI(由其他容器管理，例如Spring)
+property
+	配置数据库连接参数  name  value
+mappers
+	用于扫描信息，根元素
+	namespace属性：指定命名空间，MyBatis使用namespace+id的方式来定位sql语句，通常namespace被配置为全限定路径
+select
+	用于定义查询语句DQL
+	id属性，SQL语句的唯一标识，类似于方法名
+	resultType，用于设定查询返回的数据类型，要求写全限定路径，如果返回的是集合，写泛型的类型
+	
+
+MyBatis中查询的三个常用方法
+selectList
+	用于查询多条数据的情况，返回值是list集合
+selectOne
+	用于查询单条数据的情况，返回值是一个对象。
+selectMap
+	用于查询多条数据的情况，多条数据要形成一个map集合

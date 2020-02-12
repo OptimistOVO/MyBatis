@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- 
+  		用于定义要执行的sql语句，同时设定返回结果的类型
+   -->
+   <!-- 
+   		namespace：命名空间，一般是全限定路径 
+   		Mybatis管理sql语句是通过namespace+id来定位的
+   -->
+<mapper namespace="com.bjsxt.mapper.UserMapper">
+	<!-- 
+		select标签用于执行查询语句
+			id:  sql语句的唯一标识.类比为方法名
+			resultType：返回值类型(全限定路径)
+				如果返回的是集合，要写集合泛型的类型
+	 -->
+	<select id="selAll" resultType="User">
+		select * from user
+	</select>
+	<select id="selOne" resultType="User">
+		select * from user where id = 2
+	</select>
+	<!-- 带参数的查询	parameterType -->
+	<select id="selById" resultType="User" parameterType="string">
+		<!-- 
+			#{} 用于使用参数
+				index 索引，从0开始
+				param+数字	param1
+		 -->
+		 select * from user where username =#{param1}
+	</select>
+	<select id="selByUser" resultType="User" parameterType="map">
+		<!-- 如果参数是一个对象，可以通过#{属性名}来获取 -->
+		select * from user where username = #{username} and password = #{password}
+	</select>	
+	<!-- 新增 -->
+	<insert id="insUser" parameterType="User">
+		insert into user values(#{username},#{password},#{id})
+	</insert>	
+	<!-- 修改 -->
+	<update id="upUser" parameterType="User">
+		update user set username=#{username} where id=#{id}
+	</update>
+	<!-- 删除 -->	
+	<delete id="delUser" parameterType="_int">
+		delete from user where id = #{id}
+	</delete>
+	
+	
+	<!-- 以下是测试接口绑定 -->
+	<select id="selectAll" resultType="User">
+		select * from user
+	</select>
+	<!-- 根据id查用户 -->
+	<select id="selectById" resultType="User">
+		select * from user where username = #{username} and password = #{password}
+	</select>
+	
+	<!-- 动态SQL测试 -->
+	<select id="selDongTai" resultType="User">
+		select * from user
+		<!-- where标签用于管理SQL后面的where是否添加，以及去除第一个条件的and -->
+		<where>
+			<!-- if标签管理SQL语句的条件是否添加 -->
+			<if test="username!=null and username!=''">
+				and username = #{username}
+			</if>
+			<if test="password!=null and password!=''">
+				and password = #{password}
+			</if>
+		</where>
+	</select>
+	
+	 <update id="updUser" parameterType="User">
+	 	update user
+	 	<set>
+	 		id=#{id},
+	 		<if test="username!=null and username!=''">
+	 			username=#{username},
+	 		</if>
+	 		<if test="password!=null and password!=''">
+	 			password=#{password},
+	 		</if>
+	 	</set>
+	 	where id=#{id}
+	 </update>
+	 
+	 <!-- 
+	 
+	 	测试trim标签
+	 	prefix 前缀
+	 	prefixOverrides 从前面删除
+	 	suffix 后缀
+	 	suffixOverrides 从后面删除
+	  -->	
+	 <update id="testTrim" parameterType="User">
+	 	update user
+	 		<trim prefix="set" prefixOverrides="" suffix="" suffixOverrides=",">
+	 			username = #{username},
+	 		</trim>
+	 		<trim prefix="," prefixOverrides="" suffix="" suffixOverrides=",">
+	 			password = #{password},
+	 		</trim>
+	 	where id = #{id}
+	 </update>
+	 
+	 <!-- 
+	 	测试bind标签
+	 	
+	  -->
+	  <select id="testBind" resultType="User" parameterType="User">
+	  	<bind name="username" value="'%'+username+'%'"/>
+	  	select * from user
+	  	<where>	  		
+	  		username like #{username}
+	  	</where>
+	  </select>
+	  
+	  <!-- 
+	  	测试foreach标签
+	  	测试include标签
+	   -->
+	  <select id="testForeach" resultType="User" parameterType="list">
+	  	select * from user where id in
+	  	<foreach collection="list" open="(" separator="," close=")" item="item">
+	  		#{item}
+	  	</foreach>
+	  </select>
+	  	  
+	  <!-- 
+	  	测试resultMap属性，解决列名与实体类属性名不一致的情况
+	  	
+	   -->
+	  <resultMap type="User" id="umap">
+	  <!-- 主键用这个 -->
+	  <id column="id" property="id1"/>
+	  <!-- 非主键用这个 -->
+	  <result column="username" property="username1"/>
+	  </resultMap>
+	  <select id="testResultMap" resultMap="umap">
+	  	select * from user
+	  </select>
+</mapper>
